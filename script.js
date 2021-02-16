@@ -7,6 +7,14 @@ canvas.width = 702;
 canvas.height = 702;
 
 let gameOver = false;
+let edibleScore = 5;
+let score = 0;
+
+const clearBoard = () => {
+  ctx.fillStyle = "black";
+  ctx.rect(0, 0, canvas.width, canvas.height);
+  ctx.fill();
+};
 
 class Edible {
   constructor() {
@@ -14,7 +22,7 @@ class Edible {
     this.decidePosition();
   }
 
-  decidePosition(snake) {
+  decidePosition() {
     this.x = Math.round(Math.random() * (canvas.width - this.dimension));
     this.y = Math.round(Math.random() * (canvas.height - this.dimension));
   }
@@ -78,7 +86,8 @@ class Snake {
     const r2 = { x: edible.x + edible.dimension, y: edible.y + edible.dimension };
 
     if (!(l1.x >= r2.x || l2.x >= r1.x) && !(l1.y >= r2.y || l2.y >= r1.y)) {
-      this.length = this.length + 10;
+      this.length = this.length + edibleScore;
+      score = score + edibleScore;
       return true;
     }
     return false;
@@ -119,6 +128,7 @@ class Snake {
 
     if (!thing) {
       gameOver = true;
+      console.log(score);
       console.log("no");
     } else {
       if (this.history.length > this.length) this.history.shift();
@@ -179,48 +189,71 @@ class Snake {
   }
 }
 
-const block = new Snake(canvas.width / 2, canvas.height / 2, 12);
-const edible = new Edible();
+function startGame() {
+  gameOver = false;
 
-const clearBoard = () => {
-  ctx.fillStyle = "black";
-  ctx.rect(0, 0, canvas.width, canvas.height);
-  ctx.fill();
-};
+  edibleScore = 5;
 
-block.edible = [edible];
+  score = 0;
 
-function update() {
-  // block.random();
+  const block = new Snake(canvas.width / 2, canvas.height / 2, 12);
+  const edible = new Edible();
 
-  block.move();
-  edible.render();
+  block.edible = [edible];
+
+  function update() {
+    // block.random();
+
+    block.move();
+    edible.render();
+  }
+
+  document.onkeydown = function (e) {
+    e = e || window.event;
+    console.log(e.code)
+    if (!gameOver) {
+      switch (e.code) {
+        case "KeyW":
+          block.lastHistorySquare(block.up(true)) || (block.direction = block.up);
+          break;
+
+        case "KeyS":
+          block.lastHistorySquare(block.down(true)) || (block.direction = block.down);
+          break;
+
+        case "KeyA":
+          block.lastHistorySquare(block.left(true)) || (block.direction = block.left);
+          break;
+
+        case "KeyD":
+          block.lastHistorySquare(block.right(true)) || (block.direction = block.right);
+          break;
+
+
+
+        case "ArrowUp":
+          block.lastHistorySquare(block.up(true)) || (block.direction = block.up);
+          break;
+
+        case "ArrowDown":
+          block.lastHistorySquare(block.down(true)) || (block.direction = block.down);
+          break;
+
+        case "ArrowLeft":
+          block.lastHistorySquare(block.left(true)) || (block.direction = block.left);
+          break;
+
+        case "ArrowRight":
+          block.lastHistorySquare(block.right(true)) || (block.direction = block.right);
+          break;
+      }
+    }
+  };
+
+  const gameInterval = setInterval(() => {
+    if (gameOver) clearInterval(gameInterval);
+    else update();
+  }, 50);
 }
 
-document.onkeypress = function (e) {
-  e = e || window.event;
-  if (!gameOver) {
-    switch (e.code) {
-      case "KeyW":
-        block.lastHistorySquare(block.up(true)) || (block.direction = block.up);
-        break;
-
-      case "KeyS":
-        block.lastHistorySquare(block.down(true)) || (block.direction = block.down);
-        break;
-
-      case "KeyA":
-        block.lastHistorySquare(block.left(true)) || (block.direction = block.left);
-        break;
-
-      case "KeyD":
-        block.lastHistorySquare(block.right(true)) || (block.direction = block.right);
-        break;
-    }
-  }
-};
-
-const gameInterval = setInterval(() => {
-  if (gameOver) clearInterval(gameInterval);
-  else update();
-}, 50);
+startGame();

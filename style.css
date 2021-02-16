@@ -12,3 +12,18 @@ body {
   justify-content: center;
   align-items: center;
 }
+
+#info {
+  /* background-color: aqua; */
+  /* margin-left: 10px; */
+  /* left: 10; */
+  /* position: absolute; */
+}
+
+#restart {
+  position: fixed;
+  padding: 10px;
+  font-size: large;
+  left: 10px;
+  top: 10px;
+}
