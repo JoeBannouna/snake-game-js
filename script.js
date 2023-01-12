@@ -124,9 +124,9 @@ class Snake {
 
   move() {
     const directionCoords = this.direction(true);
-    const thing = this.validPosition(directionCoords);
+    const positionIsValid = this.validPosition(directionCoords);
 
-    if (!thing) {
+    if (!positionIsValid) {
       gameOver = true;
       console.log(score);
       console.log("no");
